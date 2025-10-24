@@ -1,9 +1,9 @@
 # Import the QueryBase class
-#### YOUR CODE HERE
+from .query_base import QueryBase
 
 # Import dependencies needed for sql execution
 # from the `sql_execution` module
-#### YOUR CODE HERE
+from .sql_execution import *
 
 # Define a subclass of QueryBase
 # called Employee

@@ -1,5 +1,5 @@
 # Import any dependencies needed to execute sql queries
-# YOUR CODE HERE
+
 
 # Define a class called QueryBase
 # Use inheritance to add methods
