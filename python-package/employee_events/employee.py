@@ -62,15 +62,15 @@ class Employee(QueryBase):
     # so when it is called, a pandas dataframe
     # is returns containing the execution of
     # the sql query
+     #### YOUR CODE HERE
     def model_data(self, id):
         query = f"""
                     SELECT SUM(positive_events) positive_events
-                         , SUM(negative_events) negative_events
+                        , SUM(negative_events) negative_events
                     FROM {self.name}
                     JOIN employee_events
                         USING(employee_id)
                     WHERE {self.name}.employee_id = {id}
                 """
-        # Execute the query and return as pandas DataFrame
         result = self.query(query)  
         return pd.DataFrame(result, columns=['positive_events', 'negative_events'])
