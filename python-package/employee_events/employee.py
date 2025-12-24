@@ -62,7 +62,6 @@ class Employee(QueryBase):
     # so when it is called, a pandas dataframe
     # is returns containing the execution of
     # the sql query
-     #### YOUR CODE HERE
     def model_data(self, id):
         query = f"""
                     SELECT SUM(positive_events) positive_events
