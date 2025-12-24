@@ -24,7 +24,7 @@ class Team(QueryBase):
         # the team_name and team_id columns
         # from the team table for all teams
         # in the database
-        query = """"
+        query = """
         SELECT team_name, team_id 
         FROM team
         """

@@ -2,13 +2,17 @@ from fasthtml.common import *
 import matplotlib.pyplot as plt
 
 # Import QueryBase, Employee, Team from employee_events
+#### YOUR CODE HERE
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python-package'))
 from employee_events.query_base import QueryBase
 from employee_events.employee import Employee  
 from employee_events.team import Team
 
 # import the load_model function from the utils.py file
-from .utils import load_model
-
+#### YOUR CODE HERE
+from report.utils import load_model
 """
 Below, we import the parent classes
 you will use for subclassing
@@ -26,7 +30,7 @@ from combined_components import FormGroup, CombinedComponent
 
 # Create a subclass of base_components/dropdown
 # called `ReportDropdown`
-class ReportDropdown (Dropdown):
+class ReportDropdown(Dropdown):
     
     # Overwrite the build_component method
     # ensuring it has the same parameters
@@ -50,10 +54,9 @@ class ReportDropdown (Dropdown):
         # names and ids
         return model.names()
 
-
 # Create a subclass of base_components/BaseComponent
 # called `Header`
-class Header (BaseComponent):
+class Header(BaseComponent):
 
     # Overwrite the `build_component` method
     # Ensure the method has the same parameters
@@ -68,11 +71,11 @@ class Header (BaseComponent):
 
 # Create a subclass of base_components/MatplotlibViz
 # called `LineChart`
-class LineChart (MatplotlibViz):
+class LineChart(MatplotlibViz):
     
     # Overwrite the parent class's `visualization`
     # method. Use the same parameters as the parent
-    def visualization(self, entity_id, model):
+    def visualization(self, asset_id, model):
     
 
         # Pass the `asset_id` argument to
@@ -81,14 +84,14 @@ class LineChart (MatplotlibViz):
         df = model.event_counts(asset_id)
         
         # Use the pandas .fillna method to fill nulls with 0
-        df=df.fillna(0)
+        df = df.fillna(0)
         
         # User the pandas .set_index method to set
         # the date column as the index
-        df=df.set_index('Day')
+        df = df.set_index('Day')
         
         # Sort the index
-        df=df.sort_index()
+        df = df.sort_index()
         
         # Use the .cumsum method to change the data
         # in the dataframe to cumulative counts
@@ -115,7 +118,6 @@ class LineChart (MatplotlibViz):
         # the border color and font color to black. 
         # Reference the base_components/matplotlib_viz file 
         # to inspect the supported keyword arguments
-        
         self.set_axis_styling(ax, bordercolor='black', fontcolor='black')
         
         # Set title and labels for x and y axis
@@ -126,7 +128,7 @@ class LineChart (MatplotlibViz):
 
 # Create a subclass of base_components/MatplotlibViz
 # called `BarChart`
-class BarChart (MatplotlibViz):
+class BarChart(MatplotlibViz):
 
     # Create a `predictor` class attribute
     # assign the attribute to the output
@@ -135,7 +137,7 @@ class BarChart (MatplotlibViz):
 
     # Overwrite the parent class `visualization` method
     # Use the same parameters as the parent
-    def visualization(self, entity_id, model):
+    def visualization(self, asset_id, model):
 
         # Using the model and asset_id arguments
         # pass the `asset_id` to the `.model_data` method
@@ -180,7 +182,7 @@ class BarChart (MatplotlibViz):
  
 # Create a subclass of combined_components/CombinedComponent
 # called Visualizations       
-class Visualizations (CombinedComponent):
+class Visualizations(CombinedComponent):
 
     # Set the `children`
     # class attribute to a list
@@ -193,16 +195,16 @@ class Visualizations (CombinedComponent):
             
 # Create a subclass of base_components/DataTable
 # called `NotesTable`
-class NotesTable (DataTable):
+class NotesTable(DataTable):
 
     # Overwrite the `component_data` method
     # using the same parameters as the parent class
-    def component_data(entity_id, model):
+    def component_data(self, asset_id, model):
         
         # Using the model and entity_id arguments
         # pass the entity_id to the model's .notes 
         # method. Return the output
-        return model.notes(entity_id)
+        return model.notes(asset_id)
     
 
 class DashboardFilters(FormGroup):
@@ -225,21 +227,17 @@ class DashboardFilters(FormGroup):
     
 # Create a subclass of CombinedComponents
 # called `Report`
-class Report (CombinedComponent):
+class Report(CombinedComponent):
 
     # Set the `children`
     # class attribute to a list
     # containing initialized instances 
     # of the header, dashboard filters,
     # data visualizations, and notes table
-    children = [Header(),
-        DashboardFilters(),
-        Visualizations(),
-        NotesTable()
-    ]
+    children = [Header(), DashboardFilters(), Visualizations(), NotesTable()]
 
 # Initialize a fasthtml app 
-app = fasthtml.App()
+app = FastHTML()
 
 # Initialize the `Report` class
 report = Report()
@@ -313,4 +311,6 @@ async def update_data(r):
     
 
 
-serve()
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

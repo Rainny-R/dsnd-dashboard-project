@@ -4,6 +4,7 @@ from .query_base import QueryBase
 # Import dependencies needed for sql execution
 # from the `sql_execution` module
 from .sql_execution import *
+import pandas as pd
 
 # Define a subclass of QueryBase
 # called Employee
@@ -27,7 +28,7 @@ class Employee(QueryBase):
         # 2. The employee's id
         # This query should return the data
         # for all employees in the database
-         query = """
+        query = """
         SELECT first_name || ' ' || last_name AS full_name, 
                employee_id 
         FROM employee
@@ -47,12 +48,12 @@ class Employee(QueryBase):
         # Use f-string formatting and a WHERE filter
         # to only return the full name of the employee
         # with an id equal to the id argument
-        query = f"""
+        query = """
         SELECT first_name || ' ' || last_name AS full_name
         FROM employee
-        WHERE employee_id = {id}
+        WHERE employee_id = ?
         """
-        return self.query(query)
+        return self.query(query, (id,))
 
 
     # Below is method with an SQL query
@@ -62,14 +63,20 @@ class Employee(QueryBase):
     # so when it is called, a pandas dataframe
     # is returns containing the execution of
     # the sql query
+     #### YOUR CODE HERE
     def model_data(self, id):
         query = f"""
-                    SELECT SUM(positive_events) positive_events
-                        , SUM(negative_events) negative_events
-                    FROM {self.name}
-                    JOIN employee_events
-                        USING(employee_id)
-                    WHERE {self.name}.employee_id = {id}
-                """
-        result = self.query(query)  
-        return pd.DataFrame(result, columns=['positive_events', 'negative_events'])
+        SELECT 
+            COALESCE(SUM(positive_events), 0) as positive_events,
+            COALESCE(SUM(negative_events), 0) as negative_events
+        FROM employee_events
+        WHERE employee_id = ?
+        """
+        result = self.query(query, (id,))
+        
+        # Convert to DataFrame
+        if result:
+            return pd.DataFrame(result, columns=['positive_events', 'negative_events'])
+        else:
+            # Return empty DataFrame with correct columns if no results
+            return pd.DataFrame(columns=['positive_events', 'negative_events'])
