@@ -43,7 +43,7 @@ class Team(QueryBase):
         # Use f-string formatting and a WHERE filter
         # to only return the team name related to
         # the ID argument
-        query = """
+        query = f"""
         SELECT team_name
         FROM team
         WHERE team_id = {id}
@@ -65,13 +65,14 @@ class Team(QueryBase):
                     SELECT employee_id
                          , SUM(positive_events) positive_events
                          , SUM(negative_events) negative_events
-                    FROM {self.name}
-                    JOIN employee_events
-                        USING({self.name}_id)
-                    WHERE {self.name}.{self.name}_id = {id}
+                    FROM employee_events
+                    WHERE team_id = {id}
                     GROUP BY employee_id
                    )
                 """
         # Execute the query and return as pandas DataFrame
         result = self.query(query)
-        return pd.DataFrame(result, columns=['positive_events', 'negative_events'])
+        if result:
+            return pd.DataFrame(result, columns=['positive_events', 'negative_events'])
+        else:
+            return pd.DataFrame(columns=['positive_events', 'negative_events'])

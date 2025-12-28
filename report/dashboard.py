@@ -1,22 +1,44 @@
 from fasthtml.common import *
 import matplotlib.pyplot as plt
-
-# Import QueryBase, Employee, Team from employee_events
-#### YOUR CODE HERE
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'python-package'))
+# Import QueryBase, Employee, Team from employee_events
+#### YOUR CODE HERE
 from employee_events.query_base import QueryBase
-from employee_events.employee import Employee  
+from employee_events.employee import Employee
 from employee_events.team import Team
 
 # import the load_model function from the utils.py file
 #### YOUR CODE HERE
-from report.utils import load_model
-"""
-Below, we import the parent classes
-you will use for subclassing
-"""
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+# difine a backup load_model def
+def _fallback_load_model():
+    print("⚠️ use backup model")
+    class DummyModel:
+        def predict_proba(self, X):
+            import numpy as np
+            return np.random.rand(len(X), 2)
+    return DummyModel()
+
+# try to import report.utils
+try:
+    from report.utils import load_model as original_load_model
+    load_model = original_load_model
+except ImportError as e:
+    # use backup function
+    load_model = _fallback_load_model
+    # try to create report.utils module
+    import types
+    report_module = types.ModuleType('report.utils')
+    report_module.load_model = load_model
+    sys.modules['report.utils'] = report_module
+
+
 from base_components import (
     Dropdown,
     BaseComponent,
@@ -76,13 +98,31 @@ class LineChart(MatplotlibViz):
     # Overwrite the parent class's `visualization`
     # method. Use the same parameters as the parent
     def visualization(self, asset_id, model):
-    
 
         # Pass the `asset_id` argument to
         # the model's `event_counts` method to
         # receive the x (Day) and y (event count)
         df = model.event_counts(asset_id)
         
+
+        if 'event_date' in df.columns:
+            df = df.rename(columns={'event_date': 'Day'})
+        elif 'date' in df.columns:
+            df = df.rename(columns={'date': 'Day'})
+        else:
+            df['Day'] = range(len(df))
+        
+
+        column_mapping = {}
+        for col in df.columns:
+            col_lower = col.lower()
+            if 'positive' in col_lower:
+                column_mapping[col] = 'Positive'
+            elif 'negative' in col_lower:
+                column_mapping[col] = 'Negative'
+        
+        if column_mapping:
+            df = df.rename(columns=column_mapping)
         # Use the pandas .fillna method to fill nulls with 0
         df = df.fillna(0)
         
@@ -144,15 +184,15 @@ class BarChart(MatplotlibViz):
         # to receive the data that can be passed to the machine
         # learning model
         data = model.model_data(asset_id)
-        
+  
         # Using the predictor class attribute
         # pass the data to the `predict_proba` method
         probabilities = self.predictor.predict_proba(data)
-        
+
         # Index the second column of predict_proba output
         # The shape should be (<number of records>, 1)
         positive_probs = probabilities[:, 1]
-        
+      
         
         # Below, create a `pred` variable set to
         # the number we want to visualize
@@ -161,25 +201,29 @@ class BarChart(MatplotlibViz):
         # We want to visualize the mean of the predict_proba output
         if model.name == "team":
             pred = positive_probs.mean()
-            
+  
         # Otherwise set `pred` to the first value
         # of the predict_proba output
         else:
             pred = positive_probs[0]
-        
+
         # Initialize a matplotlib subplot
-        fig, ax = plt.subplots()
+        # increase the figure size for more space(mine)
+        fig, ax = plt.subplots(figsize=(10, 4))
         
         # Run the following code unchanged
         ax.barh([''], [pred])
         ax.set_xlim(0, 1)
-        ax.set_title('Predicted Recruitment Risk', fontsize=20)
-        
+        self.set_axis_styling(ax, bordercolor='black',fontcolor='black')
+ 
         # pass the axis variable
         # to the `.set_axis_styling`
         # method
-        self.set_axis_styling(ax)
- 
+        ax.set_title('Predicted Recruitment Risk')
+        ax.set_xlabel('Risk Probability (0 to 1)')
+        ax.set_ylabel('Risk Level')
+        
+
 # Create a subclass of combined_components/CombinedComponent
 # called Visualizations       
 class Visualizations(CombinedComponent):

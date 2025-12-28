@@ -48,12 +48,12 @@ class Employee(QueryBase):
         # Use f-string formatting and a WHERE filter
         # to only return the full name of the employee
         # with an id equal to the id argument
-        query = """
+        query = f"""
         SELECT first_name || ' ' || last_name AS full_name
         FROM employee
-        WHERE employee_id = ?
+        WHERE employee_id = {id}
         """
-        return self.query(query, (id,))
+        return self.query(query)
 
 
     # Below is method with an SQL query
@@ -70,9 +70,9 @@ class Employee(QueryBase):
             COALESCE(SUM(positive_events), 0) as positive_events,
             COALESCE(SUM(negative_events), 0) as negative_events
         FROM employee_events
-        WHERE employee_id = ?
+        WHERE employee_id = {id}
         """
-        result = self.query(query, (id,))
+        result = self.query(query)
         
         # Convert to DataFrame
         if result:

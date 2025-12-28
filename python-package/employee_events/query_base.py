@@ -36,9 +36,9 @@ class QueryBase(QueryMixin):
         SELECT 
             event_date,
             SUM(positive_events) AS total_positive_events,
-            SUM(negative_events) AS total_positive_events
+            SUM(negative_events) AS total_negative_events
         FROM employee_events
-        WHERE emplyee_id = {id}
+        WHERE {self.name}_id = {id}  
         GROUP BY event_date
         ORDER BY event_date
         """
@@ -61,10 +61,9 @@ class QueryBase(QueryMixin):
             n.note_date,
             n.note
         FROM notes n
-        JOIN {self.name} e ON n.employee_id = e.employee_id
-        WHERE e.employee_id = {id}
+        JOIN {self.name} e ON n.{self.name}_id = e.{self.name}_id
+        WHERE e.{self.name}_id = {id}
         ORDER BY n.note_date
         """
-        
         return self.pandas_query(query)
 
