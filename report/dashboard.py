@@ -354,7 +354,6 @@ async def update_data(r):
         return RedirectResponse(f"/team/{id}", status_code=303)
     
 
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
