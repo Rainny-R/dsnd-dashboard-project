@@ -181,4 +181,4 @@ Our dashboard transformed how we approach retention. Instead of reacting to resi
 
 The most valuable insight wasn't in the code or the algorithms—it was in the uncomfortable truth the data revealed: sometimes, the best performance review is a resignation letter waiting to happen. By making this visible to managers, we're not just retaining talent—we're building a culture that values and nurtures it proactively.
 
-The complete codebase demonstrates how clean architecture, thoughtful visualization, and machine learning can transform business challenges into actionable insights—proving that sometimes the most valuable data science projects are those that challenge our deepest assumptions.
+The complete codebase demonstrates how clean architecture, thoughtful visualization, and machine learning can transform business challenges into actionable insights—proving that sometimes the most valuable data science projects are those that challenge our deepest assumptions." " 
