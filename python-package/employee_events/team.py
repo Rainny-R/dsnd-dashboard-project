@@ -6,36 +6,38 @@ import pandas as pd
 
 # Create a subclass of QueryBase
 # called  `Team`
+
+
 class Team(QueryBase):
 
     # Set the class attribute `name`
     # to the string "team"
     name = "team"
 
-
     # Define a `names` method
     # that receives no arguments
     # This method should return
     # a list of tuples from an sql execution
+
     def names(self):
-        
+
         # Query 5
         # Write an SQL query that selects
         # the team_name and team_id columns
         # from the team table for all teams
         # in the database
         query = """
-        SELECT team_name, team_id 
+        SELECT team_name, team_id
         FROM team
         """
         return self.query(query)
-    
 
     # Define a `username` method
     # that receives an ID argument
     # This method should return
     # a list of tuples from an sql execution
-    def username (self, id):
+
+    def username(self, id):
 
         # Query 6
         # Write an SQL query
@@ -50,7 +52,6 @@ class Team(QueryBase):
         """
         return self.query(query)
 
-
     # Below is method with an SQL query
     # This SQL query generates the data needed for
     # the machine learning model.
@@ -58,7 +59,8 @@ class Team(QueryBase):
     # so when it is called, a pandas dataframe
     # is returns containing the execution of
     # the sql query
-    #### YOUR CODE HERE
+    # YOUR CODE HERE
+
     def model_data(self, id):
         query = f"""
             SELECT positive_events, negative_events FROM (
@@ -73,6 +75,10 @@ class Team(QueryBase):
         # Execute the query and return as pandas DataFrame
         result = self.query(query)
         if result:
-            return pd.DataFrame(result, columns=['positive_events', 'negative_events'])
+            return pd.DataFrame(
+                result,
+                columns=[
+                    'positive_events',
+                    'negative_events'])
         else:
             return pd.DataFrame(columns=['positive_events', 'negative_events'])

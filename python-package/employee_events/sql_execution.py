@@ -11,12 +11,12 @@ db_path = Path(__file__).parent / "employee_events.db"
 # OPTION 1: MIXIN
 # Define a class called `QueryMixin`
 class QueryMixin:
-    
+
     # Define a method named `pandas_query`
     # that receives an sql query as a string
     # and returns the query's result
     # as a pandas dataframe
-    def pandas_query(self, sql_query:str):
+    def pandas_query(self, sql_query: str):
         try:
             with connect(db_path) as conn:
                 return pd.read_sql_query(sql_query, conn)
@@ -30,15 +30,15 @@ class QueryMixin:
     # and returns the query's result as
     # a list of tuples. (You will need
     # to use an sqlite3 cursor)
-    def query(self, sql_query:str):
+    def query(self, sql_query: str):
         with connect(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(sql_query)
             return cursor.fetchall()
-    
 
- 
- # Leave this code unchanged
+# Leave this code unchanged
+
+
 def query(func):
     """
     Decorator that runs a standard sql execution
@@ -53,5 +53,5 @@ def query(func):
         result = cursor.execute(query_string).fetchall()
         connection.close()
         return result
-    
+
     return run_query
