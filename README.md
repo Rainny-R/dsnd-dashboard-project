@@ -182,3 +182,53 @@ Our dashboard transformed how we approach retention. Instead of reacting to resi
 The most valuable insight wasn't in the code or the algorithms—it was in the uncomfortable truth the data revealed: sometimes, the best performance review is a resignation letter waiting to happen. By making this visible to managers, we're not just retaining talent—we're building a culture that values and nurtures it proactively.
 
 The complete codebase demonstrates how clean architecture, thoughtful visualization, and machine learning can transform business challenges into actionable insights—proving that sometimes the most valuable data science projects are those that challenge our deepest assumptions." " 
+
+# Environment Setup and Deployment Guide
+
+### Prerequisites
+- Python 3.8 or higher
+- Git
+- Modern web browser (Chrome/Firefox/Edge)
+
+### Steps:
+1. Clone the repository by 
+```bash
+  git clone https://github.com/Rainny-R/dsnd-dashboard-project.git
+   cd your-repo-name
+```
+
+2. Create and activate virtual environment:
+```bash
+# Create virtual environment
+python -m venv env
+
+# Activate it
+# Windows:
+.\env\Scripts\activate
+# Mac/Linux:
+source env/bin/activate
+```
+3. Install all dependencies:
+```bash
+pip install -r requirements.txt
+# Optional development tools:
+pip install pytest flake8 autopep8
+```
+
+4. Verify installation with tests:
+```bash
+# Run unit tests
+pytest tests/
+# Check code formatting
+flake8 .
+```
+5. Launch the dashboard application:
+```bash
+cd report
+python dashboard.py
+```
+
+6. Access the application in your browser:
+
+- Open: http://localhost:8000
+- Default port is 8000(modify in dashboard.py if needed)
